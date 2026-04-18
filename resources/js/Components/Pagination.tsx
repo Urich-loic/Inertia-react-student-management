@@ -14,9 +14,9 @@ export default function Pagination({ pagination }: { pagination: unknown }) {
                             <div>
                                 <p className="text-sm text-gray-700">
                                     Showing
-                                    <span className="font-medium mx-1">{pagination.current_page}</span>
+                                    <span className="font-medium mx-1">{pagination.from}</span>
                                     to
-                                    <span className="font-medium mx-1">{pagination.per_page}</span>
+                                    <span className="font-medium mx-1">{pagination.to}</span>
                                     of
                                     <span className="font-medium mx-1">
                                         {pagination.total}
@@ -31,6 +31,8 @@ export default function Pagination({ pagination }: { pagination: unknown }) {
                                 >
                                     {pagination.links.map((paginate)=>{
                                         return(<Link
+                                        only={['students']}
+                                        preserveScroll
                                             key={paginate.label}
                                             href={paginate.url||'#'}
                                         className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
@@ -39,7 +41,7 @@ export default function Pagination({ pagination }: { pagination: unknown }) {
                                                 : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                                         } `}
                                     >
-                                        <span>{paginate.label}</span>
+                                        <span dangerouslySetInnerHTML={{ __html: paginate.label }} />
                                     </Link>);
                                     })}
                                     

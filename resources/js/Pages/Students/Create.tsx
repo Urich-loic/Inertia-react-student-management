@@ -1,13 +1,30 @@
 import React from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 
-export default function Create() {
+
+
+export default function Create({classes, sections}:{classes:any, sections:any}) {
+
+const { data, setData, post, processing, errors } = useForm({
+  name: '',
+  email: '',
+  Class_id: '',
+  Section_id: '',
+})
+
+function submit(e) {
+  e.preventDefault()
+  post('/login')
+}
+
+const Classdatas = classes.data;
+const Sectiondatas = sections.data;
   return (
            <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Students archive
+                    Create Students 
                 </h2>
             }
         >
@@ -15,12 +32,12 @@ export default function Create() {
     <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
                     <div className="space-y-6 sm:px-6 lg:px-0 lg:col-span-12">
-                        <form>
+                        <form onSubmit={(e)=>submit(e)}>
                             <div className="shadow sm:rounded-md sm:overflow-hidden">
                                 <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
                                     <div>
                                         <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                            Student Information
+                                            Create Student
                                         </h3>
                                         <p className="mt-1 text-sm text-gray-500">
                                             Use this form to create a new
@@ -37,6 +54,8 @@ export default function Create() {
                                                 Name
                                             </label>
                                             <input
+                                            onChange={e=>setData('name',e.target.value)}
+                                                value={data.name}
                                                 type="text"
                                                 id="name"
                                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-red-900 focus:ring-red-500 focus:border-red-500 border-red-300"    
@@ -51,6 +70,8 @@ export default function Create() {
                                                 Email Address
                                             </label>
                                             <input
+                                             onChange={e=>setData('email',e.target.value)}
+                                                value={data.email}
                                                 type="email"
                                                 id="email"
                                                 autoComplete="email"
@@ -69,10 +90,13 @@ export default function Create() {
                                                 id="class_id"
                                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                                             >
-                                                <option value="">
-                                                    Select a Class
-                                                </option>
-                                                <option value="1">Class 1</option>
+                                                {
+                                                Classdatas.map((Classdata)=>{
+                                                return(<option key={Classdata.id} value={Classdata.id}>
+                                                    {Classdata.name}
+                                                </option>   );        
+                                                })}
+                                                
                                             </select>
                                         </div>
 
@@ -87,10 +111,12 @@ export default function Create() {
                                                 id="section_id"
                                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                                             >
-                                                <option value="">
-                                                    Select a Section
-                                                </option>
-                                                <option value="1">Section A</option>
+                                                {Sectiondatas.map((Sectiondata)=>{
+                                                    return(<option key={Sectiondata.id} value={Sectiondata.id}>
+                                                    {Sectiondata.name}
+                                                </option>);
+                                                })}
+                                                
                                             </select>
                                         </div>
                                     </div>

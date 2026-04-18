@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ClassResource;
+use App\Http\Resources\SectionResource;
 use App\Http\Resources\StudentResource;
+use App\Models\Classes;
+use App\Models\Section;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,7 +29,12 @@ class StudentController extends Controller
         */
         public function create()
         {
-            return Inertia::render('Students/Create');
+            $classes = ClassResource::collection(Classes::all());
+            $sections = SectionResource::collection(Section::all());
+            return Inertia::render('Students/Create', [
+                'classes' => $classes,
+                'sections' => $sections,
+            ]);
         }
     
         /**

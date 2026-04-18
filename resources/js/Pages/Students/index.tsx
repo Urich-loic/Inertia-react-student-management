@@ -5,7 +5,6 @@ import Pagination from '@/Components/Pagination';
 
 export default function Index({ students }: { students: any }) {
 
-    console.log(students.data);
     return (
         <AuthenticatedLayout
             header={
