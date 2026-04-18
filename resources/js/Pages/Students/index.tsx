@@ -1,10 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import Pagination from '@/Components/Pagination';
+import { PageProps } from '@/types';
 
 
 export default function Index({ students }: { students: any }) {
 
+    const {props} = usePage<PageProps>();
+    console.log(props);
     return (
         <AuthenticatedLayout
             header={

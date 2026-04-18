@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStudentRequest;
 use App\Http\Resources\ClassResource;
 use App\Http\Resources\SectionResource;
 use App\Http\Resources\StudentResource;
@@ -18,7 +19,7 @@ class StudentController extends Controller
         */
         public function index()
         {
-            $students = Student::with(['class', 'section'])->paginate(10);
+            $students = Student::with(['class', 'section'])->latest()->paginate(10);
             return Inertia::render('Students/index', [
                 'students' => StudentResource::collection($students),
             ]);
@@ -40,9 +41,13 @@ class StudentController extends Controller
         /**
         * Store a newly created resource in storage.
         */
-        public function store(Request $request)
+        public function store(StoreStudentRequest $request)
         {
-            //
+            Student::create($request->validated());
+
+            return redirect()->route('students.index')->with('message', [
+                'type'=>'success', 
+                'body'=>'Student created successfully.']);
         }
     
         /**

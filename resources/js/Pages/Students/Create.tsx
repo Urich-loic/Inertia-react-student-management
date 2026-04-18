@@ -1,21 +1,43 @@
 import React from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
+import toast from 'react-hot-toast';
 
 
 
 export default function Create({classes, sections}:{classes:any, sections:any}) {
 
-const { data, setData, post, processing, errors } = useForm({
+const { data, setData, post, processing, errors, clearErrors } = useForm({
   name: '',
   email: '',
-  Class_id: '',
-  Section_id: '',
+  class_id: '',
+  section_id: '',
 })
 
 function submit(e) {
   e.preventDefault()
-  post('/login')
+  post(route('students.store'),{
+    onSuccess:()=>{
+        toast.success('Student created successfully!',
+            {
+                duration: 4000,
+                position: 'top-right',
+            }
+        );
+    },
+    onError:()=>{
+        toast.error('Failed to create student. Please check the form for errors.',
+            {
+                duration: 4000,
+                position: 'top-right',
+            }
+        );
+    }
+  })
+}
+
+function focusField() {
+    clearErrors()
 }
 
 const Classdatas = classes.data;
@@ -54,12 +76,14 @@ const Sectiondatas = sections.data;
                                                 Name
                                             </label>
                                             <input
+                                            onFocus={()=>focusField()}
                                             onChange={e=>setData('name',e.target.value)}
                                                 value={data.name}
                                                 type="text"
                                                 id="name"
                                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-red-900 focus:ring-red-500 focus:border-red-500 border-red-300"    
                                             />
+                                            {errors.name && <div className='text-red-500'>{errors.name}</div>}
                                         </div>
 
                                         <div className="col-span-6 sm:col-span-3">
@@ -77,6 +101,8 @@ const Sectiondatas = sections.data;
                                                 autoComplete="email"
                                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                                             />
+                                            {errors.email && <div className='text-red-500'>{errors.email}</div>}
+
                                         </div>
 
                                         <div className="col-span-6 sm:col-span-3">
@@ -87,6 +113,8 @@ const Sectiondatas = sections.data;
                                                 Class
                                             </label>
                                             <select
+                                                    onChange={e=>setData('class_id',e.target.value)}
+                                                    value={data.class_id}
                                                 id="class_id"
                                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                                             >
@@ -98,6 +126,8 @@ const Sectiondatas = sections.data;
                                                 })}
                                                 
                                             </select>
+                                            {errors.class_id && <div className='text-red-500'>{errors.class_id}</div>}
+
                                         </div>
 
                                         <div className="col-span-6 sm:col-span-3">
@@ -108,6 +138,8 @@ const Sectiondatas = sections.data;
                                                 Section
                                             </label>
                                             <select
+                                                onChange={e=>setData('section_id',e.target.value)}
+                                                value={data.section_id}
                                                 id="section_id"
                                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                                             >
@@ -118,6 +150,7 @@ const Sectiondatas = sections.data;
                                                 })}
                                                 
                                             </select>
+                                            {errors.section_id && <div className='text-red-500'>{errors.section_id}</div>}
                                         </div>
                                     </div>
                                 </div>
