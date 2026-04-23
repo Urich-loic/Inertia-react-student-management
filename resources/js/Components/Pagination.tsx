@@ -1,9 +1,9 @@
 import { Link } from '@inertiajs/react';
 import React from 'react'
 
-export default function Pagination({ pagination }: { pagination: unknown }) {
+export default function Pagination({ pagination, updatedPageNumber }: { pagination: unknown, updatedPageNumber: (link: unknown) => void }) {
 
-    console.log(pagination);
+
   return (
     <div className="max-w-7xl mx-auto py-6">
             <div className="max-w-none mx-auto">
@@ -29,19 +29,23 @@ export default function Pagination({ pagination }: { pagination: unknown }) {
                                     className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
                                     aria-label="Pagination"
                                 >
-                                    {pagination.links.map((paginate)=>{
+                                    {pagination.links.map((paginat)=>{
                                         return(<Link
                                         only={['students']}
                                         preserveScroll
-                                            key={paginate.label}
-                                            href={paginate.url||'#'}
+                                            key={paginat.label}
+                                            href={paginat.url||'#'}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                updatedPageNumber(paginat);
+                                            }}
                                         className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                                            paginate.active //if link is active
+                                            paginat.active //if link is active
                                                 ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
                                                 : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                                         } `}
                                     >
-                                        <span dangerouslySetInnerHTML={{ __html: paginate.label }} />
+                                        <span dangerouslySetInnerHTML={{ __html: paginat.label }} />
                                     </Link>);
                                     })}
                                     

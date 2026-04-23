@@ -1,13 +1,71 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import Pagination from '@/Components/Pagination';
 import { PageProps } from '@/types';
+import toast from 'react-hot-toast';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 
-export default function Index({ students }: { students: any }) {
+export default function Index({ students, classes }: { students: any; classes: any }) {
+function deleteStudent(id: number) {
+    if(confirm('Are you sure you want to delete this student?')) {
+        router.delete(route('students.destroy', {
+            student: id
+        }), {
+            onSuccess:()=>{
+                toast.success('Student deleted successfully!',
+                    {
+                        position: "top-right",
+                        duration: 5000,
+                    });
+            }
+        });
+    }
+}
 
     const {props} = usePage<PageProps>();
-    console.log(props);
+
+    const [searchTerm, setSearchTerm] = useState(props.search || '');
+    const [pageNumber, setPageNumber] = useState('');
+    const [selectedClass, setSelectedClass] = useState(props.class_id || '');
+    const initialRender = useRef(true);
+
+    function updatedPageNumber(paginate:number){
+        setPageNumber(paginate.url.split('=')[1]);
+    }
+
+    const studentUrl = useMemo(() => {
+        const url = new URL(route('students.index'))
+
+        if(pageNumber) {
+            url.searchParams.append('page', pageNumber)
+        }
+
+        if(selectedClass){
+            url.searchParams.append('class_id', selectedClass)
+        }
+
+        if(searchTerm) {
+            url.searchParams.append('search', searchTerm)
+        }
+
+        return url.href;
+    },[searchTerm, pageNumber, selectedClass])
+
+
+    useEffect(()=>{
+        if(initialRender.current) {
+            initialRender.current = false;
+            return;
+        }
+
+        router.visit(studentUrl,{
+            preserveScroll:true,
+            preserveState:true,
+        })
+    },[studentUrl])
+   
+
     return (
         <AuthenticatedLayout
             header={
@@ -40,6 +98,34 @@ export default function Index({ students }: { students: any }) {
                                 </Link>
                             </div>
                         </div>
+
+                        <div className="mt-8 flex flex-col">
+                            <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                <div className="flex space-x-2 w-50 py-2 align-middle md:px-6 lg:px-8">
+                                    <search />
+                                     <input 
+                                     onChange={e=>setSearchTerm(e.target.value)}
+                                     type="text" 
+                                     value={searchTerm}
+                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-red-900"  />
+                                     <select
+                                     onChange={e=>setSelectedClass(e.target.value)}
+                                        value={selectedClass}
+                                        id="class_id"
+                                        className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                                            >
+                                            {classes.data.map((item: { id: string; name: string })=>{
+                                                    return(<option key={item.id} value={item.id}>
+                                                    {item.name}
+                                                </option> );
+                                                })}
+                                              
+                                            </select>
+                                    </div>
+                                   
+                                </div>
+                        </div>
+                              
 
                         <div className="mt-8 flex flex-col">
                             <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -114,13 +200,13 @@ export default function Index({ students }: { students: any }) {
                                                     </td>
 
                                                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                        <a
-                                                            href="#"
+                                                        <Link
+                                                            href={route('students.edit', student.id)}
                                                             className="text-indigo-600 hover:text-indigo-900"
                                                         >
                                                             Edit
-                                                        </a>
-                                                        <button className="ml-2 text-indigo-600 hover:text-indigo-900">
+                                                        </Link>
+                                                        <button onClick={()=>deleteStudent(student.id)} className="ml-2 text-indigo-600 hover:text-indigo-900">
                                                             Delete
                                                         </button>
                                                     </td>
@@ -130,7 +216,7 @@ export default function Index({ students }: { students: any }) {
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div><Pagination pagination={students.meta} /></div>
+                                    <div><Pagination updatedPageNumber={updatedPageNumber} pagination={students.meta} /></div>
                                 </div>
                             </div>
                         </div>

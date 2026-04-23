@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentRequest;
+use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\ClassResource;
 use App\Http\Resources\SectionResource;
 use App\Http\Resources\StudentResource;
@@ -17,11 +18,16 @@ class StudentController extends Controller
         /**
         * Display a listing of the resource.
         */
-        public function index()
+        public function index(Request $request)
         {
-            $students = Student::with(['class', 'section'])->latest()->paginate(10);
+            $students = Student::search($request)->with(['class', 'section'])->latest()->paginate(10);
+            $classes = ClassResource::collection(Classes::all());
+            
             return Inertia::render('Students/index', [
                 'students' => StudentResource::collection($students),
+                'classes' => $classes,
+                'search' => $request->search?? "",
+                'class_id' => $request->class_id?? "",
             ]);
         }
     
@@ -31,10 +37,8 @@ class StudentController extends Controller
         public function create()
         {
             $classes = ClassResource::collection(Classes::all());
-            $sections = SectionResource::collection(Section::all());
             return Inertia::render('Students/Create', [
                 'classes' => $classes,
-                'sections' => $sections,
             ]);
         }
     
@@ -61,24 +65,38 @@ class StudentController extends Controller
         /**
         * Show the form for editing the specified resource.
         */
-        public function edit(string $id)
+        public function edit(Student $student)
         {
-            //
+            $classes = ClassResource::collection(Classes::all());
+
+
+            return Inertia::render('Students/Edit', [
+                'classes' => $classes,
+                'student' =>StudentResource::make($student->load(['class', 'section'])),
+            ]);
         }
     
         /**
         * Update the specified resource in storage.
         */
-        public function update(Request $request, string $id)
+        public function update(UpdateStudentRequest $request, Student $student)
         {
-            //
+            $student->update($request->validated());
+
+            return redirect()->route('students.index')->with('message', [
+                'type'=>'success', 
+                'body'=>'Student updated successfully.']);
         }
     
         /**
         * Remove the specified resource from storage.
         */
-        public function destroy(string $id)
+        public function destroy(Student $student)
         {
-            //
+            $student->delete();
+
+            return redirect()->route('students.index')->with('message', [
+                'type'=>'success', 
+                'body'=>'Student deleted successfully.']);
         }
 }

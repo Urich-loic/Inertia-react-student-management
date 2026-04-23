@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import toast from 'react-hot-toast';
-import axios, { Axios } from 'axios';
+import axios from 'axios';
 
 
 
-export default function Create({classes}:{classes:any, sections:any}) {
+export default function Edit({auth, classes, student}:{classes:any, student:any}) {
+
 const [sections, setSections] = useState([]);
-const { data, setData, post, processing, errors, clearErrors } = useForm({
-  name: '',
-  email: '',
-  class_id: '',
-  section_id: '',
+
+const { data, setData, put, processing, errors, clearErrors } = useForm({
+  name: student.data.name,
+  email: student.data.email,
+  class_id: student.data.class.id,
+  section_id: student.data.section.id,
 })
+
 
 function submit(e) {
   e.preventDefault()
-  post(route('students.store'),{
+  put(route('students.update', {
+    student: student.data.id
+  }),{
     onSuccess:()=>{
-        toast.success('Student created successfully!',
+        toast.success('Student updated successfully!',
             {
                 duration: 4000,
                 position: 'top-right',
@@ -27,7 +32,7 @@ function submit(e) {
         );
     },
     onError:()=>{
-        toast.error('Failed to create student. Please check the form for errors.',
+        toast.error('Failed to update student. Please check the form for errors.',
             {
                 duration: 4000,
                 position: 'top-right',
@@ -45,22 +50,20 @@ useEffect(()=>{
     if(data.class_id){
         axios.get(route('sections.index',{
             class_id: data.class_id
-        })).then(respons=>{
-            console.log('Sections fetched:', respons.data);
-             // Assuming the response structure has a 'data' property containing the sections
-            setSections(respons.data.data);
+        })).then(res=>{
+            console.log(res.data);
+            setSections(res.data.data);
         })
-
-        console.log('Class ID changed:', data.class_id);
     }
 },[data.class_id])
 
+const Classdatas = classes.data;
 
   return (
            <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Create Students 
+                    Update Students 
                 </h2>
             }
         >
@@ -73,10 +76,10 @@ useEffect(()=>{
                                 <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
                                     <div>
                                         <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                            Create Student
+                                            Update Student
                                         </h3>
                                         <p className="mt-1 text-sm text-gray-500">
-                                            Use this form to create a new
+                                            Use this form to Update
                                             student.
                                         </p>
                                     </div>
@@ -133,7 +136,7 @@ useEffect(()=>{
                                                 className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                                             >
                                                 {
-                                                classes.data.map((Classdata)=>{
+                                                Classdatas.map((Classdata)=>{
                                                 return(<option key={Classdata.id} value={Classdata.id}>
                                                     {Classdata.name}
                                                 </option>   );        
