@@ -26,6 +26,7 @@ function deleteStudent(id: number) {
     const {props} = usePage<PageProps>();
 
     const [searchTerm, setSearchTerm] = useState(props.search || '');
+    const [inputValue, setInputValue] = useState('');
     const [pageNumber, setPageNumber] = useState('');
     const [selectedClass, setSelectedClass] = useState(props.class_id || '');
     const initialRender = useRef(true);
@@ -64,6 +65,29 @@ function deleteStudent(id: number) {
             preserveState:true,
         })
     },[studentUrl])
+
+    useEffect(()=>{
+        if(inputValue.length > 3) {
+            const handler = setTimeout(()=>{
+            setSearchTerm(inputValue);
+        },2000)
+
+        return () => {
+            clearTimeout(handler);
+        }
+        }
+    },[inputValue])
+
+
+      useEffect(()=>{
+        const handler = setTimeout(()=>{
+            setPageNumber("1");
+        },2000)
+
+        return () => {
+            clearTimeout(handler);
+        }
+    },[inputValue])
    
 
     return (
@@ -104,9 +128,9 @@ function deleteStudent(id: number) {
                                 <div className="flex space-x-2 w-50 py-2 align-middle md:px-6 lg:px-8">
                                     <search />
                                      <input 
-                                     onChange={e=>setSearchTerm(e.target.value)}
+                                     onChange={e=>setInputValue(e.target.value)}
                                      type="text" 
-                                     value={searchTerm}
+                                     value={inputValue}
                                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-red-900"  />
                                      <select
                                      onChange={e=>setSelectedClass(e.target.value)}
