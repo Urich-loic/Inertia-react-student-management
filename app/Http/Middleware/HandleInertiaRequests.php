@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -29,12 +30,31 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $permissions = [];
+        $users = $request?->user()?->load('roles.permissions');
+        if($users){
+            foreach($users->roles as $role){
+            foreach($role->permissions as $singlePermission){
+                $permissions[] = $singlePermission->title;
+                
+            }
+        }
+
+        // collect($permissions)->unique()->map(function($permission){
+        //     return [$permission=>true];
+        // })->collapse()->dd();
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
             'message' => $request->session()->get('message'),
+            'can'=> $users?  collect($permissions)->unique()->map(function($permission){
+            return [$permission=>true];
+        })->collapse()->toArray():[],
+
         ];
     }
 }

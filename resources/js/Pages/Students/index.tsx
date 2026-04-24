@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 
-export default function Index({ students, classes }: { students: any; classes: any }) {
+export default function Index({ students, classes,  }: { students: any; classes: any }) {
 function deleteStudent(id: number) {
     if(confirm('Are you sure you want to delete this student?')) {
         router.delete(route('students.destroy', {
@@ -114,12 +114,12 @@ function deleteStudent(id: number) {
                             </div>
 
                             <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-                                <Link
+                                 {props.can.student_edit && (<Link
                                     href={route('students.create')}
                                     className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
                                 >
                                     Add Student
-                                </Link>
+                                </Link>)}
                             </div>
                         </div>
 
@@ -224,15 +224,15 @@ function deleteStudent(id: number) {
                                                     </td>
 
                                                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                        <Link
+                                                        {props.can.student_edit && (<Link
                                                             href={route('students.edit', student.id)}
                                                             className="text-indigo-600 hover:text-indigo-900"
                                                         >
                                                             Edit
-                                                        </Link>
-                                                        <button onClick={()=>deleteStudent(student.id)} className="ml-2 text-indigo-600 hover:text-indigo-900">
+                                                        </Link>)}
+                                                        {props.can.student_edit && (<button onClick={()=>deleteStudent(student.id)} className="ml-2 text-indigo-600 hover:text-indigo-900">
                                                             Delete
-                                                        </button>
+                                                        </button>)}
                                                     </td>
                                                 </tr>
                                                 )
