@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StudentController;
 use App\Models\Section;
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('students', StudentController::class);
     Route::resource('sections', SectionController::class);
+    Route::resource('roles', RoleController::class);
 });
 
 require __DIR__.'/auth.php';

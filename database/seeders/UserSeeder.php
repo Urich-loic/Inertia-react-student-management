@@ -13,10 +13,21 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-            User::factory()->create([
-                'name' => 'Admin',
-                'email' => 'admin@example.com',
+        $users = [
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@test.com',
+                'email_verified_at' => now(),
                 'password' => bcrypt('password'),
-            ]);
+            ],
+            [
+                'name' => 'Regular User',
+                'email' => 'user@test.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+            ],
+        ];
+
+        User::insert($users);
     }
 }

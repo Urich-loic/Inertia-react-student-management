@@ -8,6 +8,10 @@ class Role extends Model
 {
     protected $fillable = ['title'];
 
+    const ROLES = [
+        'Admin',
+        'User',
+    ];
     public function permissions()
     {
         return $this->belongsToMany(Permission::class);
