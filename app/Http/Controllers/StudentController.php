@@ -11,6 +11,7 @@ use App\Models\Classes;
 use App\Models\Section;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class StudentController extends Controller
@@ -20,6 +21,8 @@ class StudentController extends Controller
         */
         public function index(Request $request)
         {
+        Gate::authorize('student_access');
+
             $students = Student::search($request)->with(['class', 'section'])->latest()->paginate(10);
             $classes = ClassResource::collection(Classes::all());
             
@@ -36,6 +39,7 @@ class StudentController extends Controller
         */
         public function create()
         {
+            Gate::authorize('student_create');
             $classes = ClassResource::collection(Classes::all());
             return Inertia::render('Students/Create', [
                 'classes' => $classes,
@@ -67,6 +71,7 @@ class StudentController extends Controller
         */
         public function edit(Student $student)
         {
+            Gate::authorize('student_edit');
             $classes = ClassResource::collection(Classes::all());
 
 
@@ -93,6 +98,7 @@ class StudentController extends Controller
         */
         public function destroy(Student $student)
         {
+            Gate::authorize('student_delete');
             $student->delete();
 
             return redirect()->route('students.index')->with('message', [
