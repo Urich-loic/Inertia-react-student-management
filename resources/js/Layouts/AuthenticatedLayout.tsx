@@ -11,6 +11,8 @@ export default function Authenticated({
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const user = usePage().props.auth.user;
+    console.log(user);
+    const can = usePage().props.can;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -34,18 +36,18 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
-                                <NavLink
+                                {can.student_access && (<NavLink
                                     href={route('students.index')}
                                     active={route().current('students.index')}
                                 >
                                     Students
-                                </NavLink>
-                                 <NavLink
+                                </NavLink>)}
+                                 {can.role_access && (<NavLink
                                     href={route('roles.index')}
                                     active={route().current('roles.index')}
                                 >
                                     Roles
-                                </NavLink>
+                                </NavLink>)}
                             </div>
                         </div>
 
